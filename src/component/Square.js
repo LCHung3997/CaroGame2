@@ -1,20 +1,22 @@
 import React from "react"
 
-export default class Square extends React.Component {
+export default class Square extends React.PureComponent {
 
     render() {
-        //console.log(this.props.background)
+        const {styles,color,onClick,value} = this.props
+        // console.log(this.props.background)
         const divStyle = {            
-            background: this.props.style,     
-            color: this.props.color      
+            background: styles,     
+            color      
         };
-        //console.log(this.props.)
+        // console.log(this.props.)
         return (
-            <button 
+            <button
+            type="button" 
                 style={divStyle}
                 className="square"
-                onClick={this.props.onClick}            >
-                {this.props.value}
+                onClick={onClick}            >
+                {value}
             </button>
         );
     }
