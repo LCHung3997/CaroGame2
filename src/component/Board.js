@@ -16,6 +16,7 @@ export default class Board extends React.Component {
       if (squares[i] === 'O') {
         return (
           <Square
+            key={i}
             color="red"
             styles="white"
             value={squares[i]}
@@ -26,74 +27,79 @@ export default class Board extends React.Component {
 
       return (
         <Square
+          key={i}
           color="black"
           styles="white"
           value={squares[i]}
           onClick={() => onClick(i)}
         />
       );
-    } 
-      let check = false;
-      arrWins.forEach(element => {
-        if (element === i) {
-          check = true;
-        }
-      });
-      if (check) {
-        if (squares[i] === 'O') {
-          return (
-            <Square
-              color="red"
-              styles="#28A745"
-              value={squares[i]}
-              onClick={() => onClick(i)}
-            />
-          );
-        } 
-          return (
-            <Square
-              color="black"
-              styles="#28A745"
-              value={squares[i]}
-              onClick={() => onClick(i)}
-            />
-          );
-        
-      } 
-        if (squares[i] === 'O') {
-          return (
-            <Square
-              color="red"
-              styles="white"
-              value={squares[i]}
-              onClick={() => onClick(i)}
-            />
-          );
-        } 
-          return (
-            <Square
-              color="black"
-              styles="white"
-              value={squares[i]}
-              onClick={() => onClick(i)}
-            />
-          );
-        
-      
-    
+    }
+    let check = false;
+    arrWins.forEach(element => {
+      if (element === i) {
+        check = true;
+      }
+    });
+    if (check) {
+      if (squares[i] === 'O') {
+        return (
+          <Square
+            key={i}
+            color="red"
+            styles="#28A745"
+            value={squares[i]}
+            onClick={() => onClick(i)}
+          />
+        );
+      }
+      return (
+        <Square
+          key={i}
+          color="black"
+          styles="#28A745"
+          value={squares[i]}
+          onClick={() => onClick(i)}
+        />
+      );
+    }
+    if (squares[i] === 'O') {
+      return (
+        <Square
+          key={i}
+          color="red"
+          styles="white"
+          value={squares[i]}
+          onClick={() => onClick(i)}
+        />
+      );
+    }
+    return (
+      <Square
+        key={i}
+        color="black"
+        styles="white"
+        value={squares[i]}
+        onClick={() => onClick(i)}
+      />
+    );
   }
 
   render() {
     let items = [];
     const itemss = [];
 
-    for (let index = 0; index < 20; index+=1) {
+    for (let index = 0; index < 20; index += 1) {
       const i = 20;
       const lenght = 20 * (index + 1);
-      for (let y = i * index; y < lenght; y+=1) {
+      for (let y = i * index; y < lenght; y += 1) {
         items.push(this.renderSquare(y));
       }
-      itemss.push(<div className="board-row">{items}</div>);
+      itemss.push(
+        <div key={index} className="board-row">
+          {items}
+        </div>
+      );
       items = [];
     }
 
