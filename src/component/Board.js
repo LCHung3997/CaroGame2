@@ -1,7 +1,7 @@
 import React from 'react';
 import Square from './Square';
 
-export default class Board extends React.Component {
+class Board extends React.Component {
   fCCheck(i) {
     const { arrWin } = this.props;
     arrWin.filter(idx => {
@@ -10,7 +10,7 @@ export default class Board extends React.Component {
     });
   }
 
-  renderSquare(i) {
+  renderSquare(i) { 
     const { arrWins, squares, onClick } = this.props;
     if (arrWins.length === 0) {
       if (squares[i] === 'O') {
@@ -113,3 +113,6 @@ export default class Board extends React.Component {
     );
   }
 }
+
+
+export default Board

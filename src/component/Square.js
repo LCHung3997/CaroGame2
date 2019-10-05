@@ -1,6 +1,8 @@
 import React from "react"
+// import PropTypes from 'prop-types'
+// import { connect } from "net";
 
-export default class Square extends React.PureComponent {
+class Square extends React.PureComponent {
 
     render() {
         const { styles, color, onClick, value } = this.props
@@ -21,3 +23,12 @@ export default class Square extends React.PureComponent {
         );
     }
 }
+
+// Square.prototype ={
+//     styles=PropTypes.string.isRequired,
+//     color = PropTypes.string.isRequired,
+//     onClick = PropTypes.func.isRequired,
+//     value  = PropTypes.string.isRequired
+// }
+
+export default Square

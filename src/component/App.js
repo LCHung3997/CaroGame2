@@ -4,32 +4,15 @@ import '../css/App.css';
 import Board from './Board';
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    // this.state = {
-    //   history: [
-    //     {
-    //       squares: Array(400).fill(null)
-    //     }
-    //   ],
-    //   arrWin: [],
-    //   arrWinTemp: [],
-    //   stepNumber: 0,
-    //   xIsNext: true,
-    //   check: false,
-    //   checkWin: false,
-    //   moves: [],
-    //   isIncrease: true,
-    //   isDecrease: false
-    // };
-  }
-
-  handleClick(i) {
-    let { history } = this.state;
-    const { stepNumber, check, xIsNext } = this.state;
+  handleClick = i => {
+    const { state } = this.props;
+    let { history } = state;
+    const { stepNumber, check, xIsNext } = state;
+    const { tickSquares, checkWin } = this.props;
     history = history.slice(0, stepNumber + 1);
     const current = history[history.length - 1];
     const newSquaresArr = current.squares.slice();
+
     if (check) {
       Swal.fire({
         imageUrl:
@@ -44,16 +27,8 @@ class App extends React.Component {
       const length = 20;
       const arrTem = [];
       newSquaresArr[i] = xIsNext ? 'X' : 'O';
-
-      this.setState({
-        history: history.concat([
-          {
-            squares: newSquaresArr
-          }
-        ]),
-        stepNumber: history.length,
-        xIsNext: !xIsNext
-      });
+      // dispatch action
+      tickSquares(i, newSquaresArr, history, xIsNext);
 
       switch (newSquaresArr[i]) {
         case 'O': {
@@ -77,12 +52,9 @@ class App extends React.Component {
               arrTem.push(i - colum + 3);
               arrTem.push(i - colum + 4);
               arrTem.push(i - colum + 5);
-              this.setState({
-                check: true,
-                checkWin: true,
-                arrWin: arrTem,
-                arrWinTemp: arrTem
-              });
+
+              checkWin(arrTem);
+
               Swal.fire({
                 imageUrl:
                   'https://st.quantrimang.com/photos/image/2018/03/06/danh-co-caro-640.jpg',
@@ -112,12 +84,9 @@ class App extends React.Component {
               arrTem.push(i + (-row + 3) * 20);
               arrTem.push(i + (-row + 4) * 20);
               arrTem.push(i + (-row + 5) * 20);
-              this.setState({
-                check: true,
-                checkWin: true,
-                arrWin: arrTem,
-                arrWinTemp: arrTem
-              });
+
+              checkWin(arrTem);
+
               Swal.fire({
                 imageUrl:
                   'https://st.quantrimang.com/photos/image/2018/03/06/danh-co-caro-640.jpg',
@@ -147,12 +116,8 @@ class App extends React.Component {
               arrTem.push(i + (-row + 3) * (length + 1));
               arrTem.push(i + (-row + 4) * (length + 1));
               arrTem.push(i + (-row + 5) * (length + 1));
-              this.setState({
-                check: true,
-                checkWin: true,
-                arrWin: arrTem,
-                arrWinTemp: arrTem
-              });
+              checkWin(arrTem);
+
               Swal.fire({
                 imageUrl:
                   'https://st.quantrimang.com/photos/image/2018/03/06/danh-co-caro-640.jpg',
@@ -183,12 +148,8 @@ class App extends React.Component {
               arrTem.push(i + (-row + 3) * (length - 1));
               arrTem.push(i + (-row + 4) * (length - 1));
               arrTem.push(i + (-row + 5) * (length - 1));
-              this.setState({
-                check: true,
-                checkWin: true,
-                arrWin: arrTem,
-                arrWinTemp: arrTem
-              });
+              checkWin(arrTem);
+
               Swal.fire({
                 imageUrl:
                   'https://st.quantrimang.com/photos/image/2018/03/06/danh-co-caro-640.jpg',
@@ -221,12 +182,8 @@ class App extends React.Component {
               arrTem.push(i - colum + 3);
               arrTem.push(i - colum + 4);
               arrTem.push(i - colum + 5);
-              this.setState({
-                check: true,
-                checkWin: true,
-                arrWin: arrTem,
-                arrWinTemp: arrTem
-              });
+              checkWin(arrTem);
+
               Swal.fire({
                 imageUrl:
                   'https://st.quantrimang.com/photos/image/2018/03/06/danh-co-caro-640.jpg',
@@ -257,12 +214,8 @@ class App extends React.Component {
               arrTem.push(i + (-row + 3) * 20);
               arrTem.push(i + (-row + 4) * 20);
               arrTem.push(i + (-row + 5) * 20);
-              this.setState({
-                check: true,
-                checkWin: true,
-                arrWin: arrTem,
-                arrWinTemp: arrTem
-              });
+              checkWin(arrTem);
+
               Swal.fire({
                 imageUrl:
                   'https://st.quantrimang.com/photos/image/2018/03/06/danh-co-caro-640.jpg',
@@ -291,12 +244,8 @@ class App extends React.Component {
               arrTem.push(i + (-row + 3) * (length + 1));
               arrTem.push(i + (-row + 4) * (length + 1));
               arrTem.push(i + (-row + 5) * (length + 1));
-              this.setState({
-                check: true,
-                checkWin: true,
-                arrWin: arrTem,
-                arrWinTemp: arrTem
-              });
+              checkWin(arrTem);
+
               Swal.fire({
                 imageUrl:
                   'https://st.quantrimang.com/photos/image/2018/03/06/danh-co-caro-640.jpg',
@@ -326,12 +275,8 @@ class App extends React.Component {
               arrTem.push(i + (-row + 3) * (length - 1));
               arrTem.push(i + (-row + 4) * (length - 1));
               arrTem.push(i + (-row + 5) * (length - 1));
-              this.setState({
-                check: true,
-                checkWin: true,
-                arrWin: arrTem,
-                arrWinTemp: arrTem
-              });
+              checkWin(arrTem);
+
               Swal.fire({
                 imageUrl:
                   'https://st.quantrimang.com/photos/image/2018/03/06/danh-co-caro-640.jpg',
@@ -347,87 +292,62 @@ class App extends React.Component {
       }
     }
     return null;
-  }
+  };
 
-  handleClickReset() {
-    this.setState({
-      history: [
-        {
-          squares: Array(400).fill(null)
-        }
-      ],
-      arrWin: [],
-      stepNumber: 0,
-      xIsNext: true,
-      check: false,
-      isIncrease: true,
-      isDecrease: false
-    });
-  }
+  handleClickReset = () => {
+    const { restartGame } = this.props;
+    restartGame();
+  };
 
-  jumpTo(step) {
-    const { history, checkWin, arrWinTemp } = this.state;
+  jumpTo = step => {
+    const { state, goToMove, goToMoveWin } = this.props;
+    const { history, checkWin, arrWinTemp } = state;
     const length = history.length - 1;
     if (checkWin === true && step === length) {
-      this.setState({
-        stepNumber: step,
-        xIsNext: step % 2 === 0,
-        arrWin: arrWinTemp,
-        check: true
-      });
+      goToMove(step, arrWinTemp);
     } else {
-      this.setState({
-        stepNumber: step,
-        xIsNext: step % 2 === 0,
-        arrWin: [],
-        check: false
-      });
+      goToMoveWin(step);
     }
-  }
+  };
 
-  sort(list) {
+  sort = list => {
     const newList = [];
+    const { sortList } = this.props;
     let size = list.length;
     for (let i = 0; i < list.length; i += 1) {
       newList.push(list[size - 1]);
       size -= 1;
     }
-    this.setState({
-      moves: newList
-    });
-  }
+    sortList(newList);
+    
+  };
 
-  fIncrease(list) {
-    const { isDecrease } = this.state;
+  fIncrease = list => {
+    const { state, setIncrease } = this.props;
+    const { isDecrease} = state;
     if (isDecrease) {
       this.sort(list);
-      this.setState({
-        isIncrease: true,
-        isDecrease: false
-      });
+      setIncrease();
       return list;
     }
     return null;
-  }
+  };
 
-  fDecrease(list) {
-    const { isIncrease } = this.state;
-
+  fDecrease = list => {
+    const { state, setDecrease } = this.props;
+    const { isIncrease } = state;
+    
     if (isIncrease) {
       this.sort(list);
-      this.setState({
-        isIncrease: false,
-        isDecrease: true
-      });
+      setDecrease();
       return list;
     }
 
     return null;
-  }
+  };
 
-  sortHistory(list) {
-    // eslint-disable-next-line no-console
-    console.log('sortHistory', this);
+  sortHistory = list => {
+    // console.log('sortHistory', this);
     const newList = [];
     let size = list.length;
     for (let i = 0; i < list.length; i += 1) {
@@ -435,9 +355,10 @@ class App extends React.Component {
       size -= 1;
     }
     return newList;
-  }
+  };
 
   render() {
+    const { state } = this.props;
     const {
       history,
       stepNumber,
@@ -446,7 +367,7 @@ class App extends React.Component {
       fIncrease,
       moves,
       arrWin
-    } = this.state;
+    } = state;
     const current = history[stepNumber];
     const status = `Next player: ${xIsNext ? 'X' : 'O'}`;
     let movess = history.map((step, move) => {
@@ -539,7 +460,7 @@ class App extends React.Component {
           <Board
             arrWins={arrWin}
             squares={current.squares}
-            onClick={i => this.handleClick(i)}
+            onClick={index => this.handleClick(index)}
             color={xIsNext}
           />
         </div>
