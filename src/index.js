@@ -1,14 +1,21 @@
 import React from 'react'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
+import { createStore, applyMiddleware  } from 'redux'
+import thunkMiddleware from 'redux-thunk'
+import {createLogger} from 'redux-logger'
+// import thunk from 'redux-thunk'
+// import { logger } from 'redux-logger'
 import rootReducer from './reducers/indexReducers'
 import './css/index.css';
 import Game from './Game'
 import 'bootstrap/dist/css/bootstrap.css';
 
+const loggerMiddleware = createLogger()
 
-const store = createStore(rootReducer)
+const store = createStore(rootReducer,
+  applyMiddleware(thunkMiddleware,
+     loggerMiddleware))
 
 render(
   <Provider store={store}>

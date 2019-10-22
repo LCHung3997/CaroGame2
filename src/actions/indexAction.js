@@ -1,3 +1,6 @@
+import axios from 'axios';
+
+
 import {
   TICK_SQUARE,
   CHECK_WIN,
@@ -6,8 +9,12 @@ import {
   GOTO_MOVE_WIN,
   SORT_LIST,
   INCREASE,
-  DECREASE
+  DECREASE,
+  LOGIN_ACOUNT,
+  LOGOUT_ACOUNT,
+  CONFIRM_REGISTER
 } from '../constants/actions';
+
 
 export const tickSquare = (index, newSquaresArr, history, xIsNext) => ({
   type: TICK_SQUARE,
@@ -47,7 +54,84 @@ export const setIncrease = () => ({
 });
 
 export const setDecrease = () => ({
-    type: DECREASE
-  });
-  
-  
+  type: DECREASE
+});
+
+export const errLogin = () => ({
+  type: LOGOUT_ACOUNT
+});
+
+export const confirmRegister = () => ({
+  type: CONFIRM_REGISTER
+});
+
+
+export const logAccount = currentUser => ({
+  type: LOGIN_ACOUNT,
+  payload: currentUser
+});
+
+export const fecthAccount = (Username, Password) => {
+  return dispatch => {    
+  return axios
+    .post('https://lchung-passport-jwt.herokuapp.com/user/register', {
+      Username,
+      Password
+    })
+    .then(response => 
+      response.data
+    ).then(data => dispatch)
+    .catch(function(error) {
+      console.log(error);
+    });
+  }
+};
+
+export const loginAccount = (Username, Password) => {
+  return  dispatch => {
+    return  axios
+      .post('https://lchung-passport-jwt.herokuapp.com/user/login', {
+        Username,
+        Password
+      })
+      .then(response => response.data)
+      .then(data => {
+        if (data.message) {
+          // console.log(data)
+        } else {
+          localStorage.setItem('token', data.token);
+          dispatch(logAccount(data.user));
+          
+        }
+      }).catch(err =>{
+        console.log(err);
+        dispatch(errLogin())
+      });
+  };
+};
+
+export const getProfileFetch = () => {
+  return dispatch => {
+    // localStorage.clear();
+    const tokens = localStorage.token;
+    if (tokens) {
+      return axios
+        .get('https://lchung-passport-jwt.herokuapp.com/me', {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${tokens}`
+          }
+        })
+        .then(resp => resp.data)
+        .then(data => {
+          if (data.message) {
+            localStorage.removeItem('token');
+          } else {
+            dispatch(logAccount(data));
+          }
+        });
+    }
+    return null;
+  };
+};

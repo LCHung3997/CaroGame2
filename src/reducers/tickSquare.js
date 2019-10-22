@@ -34,7 +34,8 @@ const tickSquare = (state = createInitialState(), action) => {
         xIsNext: true,
         check: false,
         isIncrease: true,
-        isDecrease: false
+        isDecrease: false,
+        currentUser: {}
       };
     case 'GOTO_MOVE':
       return {
@@ -43,6 +44,11 @@ const tickSquare = (state = createInitialState(), action) => {
         xIsNext: action.step % 2 === 0,
         arrWin: action.arrWinTemp,
         check: true
+      };
+    case 'LOGOUT_ACOUNT':
+      return {
+        ...state,
+        currentUser: {}
       };
     case 'GOTO_MOVE_WIN':
       return {
@@ -69,6 +75,16 @@ const tickSquare = (state = createInitialState(), action) => {
         ...state,
         isIncrease: false,
         isDecrease: true
+      };
+
+    case 'LOGIN_ACOUNT':
+      return {
+        ...state,
+        currentUser: action.payload
+      };
+    case 'CONFIRM_REGISTER':
+      return {
+        ...state
       };
 
     default:

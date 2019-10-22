@@ -1,3 +1,4 @@
+
 // This will be fed into the reducer when the app loads to initialize the state
 const createInitialState = () => ({
     history: [
@@ -13,7 +14,8 @@ const createInitialState = () => ({
     checkWin: false,
     moves: [],
     isIncrease: true,
-    isDecrease: false
+    isDecrease: false,
+    currentUser: {}
 
 })
 
