@@ -104,6 +104,9 @@ class Game extends React.PureComponent {
       <Router>
         <div className="sidenav">
           <ul>
+      <li>
+                <h3 className='title'>CARO VN</h3>
+              </li>
             <li>
               <Link to="/login">
                 <Icon className="icon" type="login" /> Login
