@@ -94,6 +94,9 @@ class Game extends React.PureComponent {
                 ) : (
                   <Redirect to="/login"/>
                 )}
+                <Route path="/">
+                <Redirect to="/home" />
+                </Route>
               </Switch>
             </div>
           </div>
@@ -134,6 +137,9 @@ class Game extends React.PureComponent {
               <Route path="/register">
                 <MapRegister />
               </Route>
+      <Route path="/">
+                  <Redirect to="/login" />
+                </Route>
             </Switch>
           </div>
         </div>
