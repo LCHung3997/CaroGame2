@@ -1,22 +1,35 @@
 import React from 'react';
 import Swal from 'sweetalert2';
-import { Form, Input, Button, Icon } from 'antd';
+import { Form, Input, Button, Icon, Select } from 'antd';
 import { withRouter } from 'react-router-dom';
 import 'antd/dist/antd.css';
 import '../css/login.css';
 
+const { Option } = Select;
+
 class Register extends React.Component {
   handleSubmit = e => {
     e.preventDefault();
-    const { form, history } = this.props;
+    
+    const { form, history, restartGame } = this.props;
+    restartGame()
     form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+        // console.log('Received values of form: ', values);
         const { registerAcc } = this.props;
-        Promise.resolve(registerAcc(values.Username, values.Password)).then(
-          () => {
+        Promise.resolve(
+          registerAcc(
+            values.Username,
+            values.Password,
+            values.gmail,
+            values.gender,
+            values.avatar
+          )
+        ).then(() => {
+          const{state}  = this.props;
+          if (state.error.status === '200') {
             Swal.fire({
-              type : 'success',
+              type: 'success',
               title: 'Register succeed',
               confirmButtonText: 'LOGIN'
             }).then(result => {
@@ -24,8 +37,13 @@ class Register extends React.Component {
                 history.push('/login');
               }
             });
+          } else {
+            Swal.fire({
+              type: 'error',
+              title: 'Account already exists for your email address',
+            });
           }
-        );
+        });
       }
     });
   };
@@ -66,24 +84,54 @@ class Register extends React.Component {
               />
             )}
           </Form.Item>
-          {/* <Form.Item>
-            {getFieldDecorator('ConfirmPassword', {
-              rules: [
-                {
-                  required: true,
-                  message: 'Please input your confirm password!'
-                }
-              ]
+          <Form.Item>
+            {getFieldDecorator('gmail', {
+              rules: [{ required: true, message: 'Please input your gmail!' }]
             })(
-              <Input.Password
+              <Input
+                type="email"
                 prefix={
-                  <Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />
+                  <Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />
                 }
-                type="Confirm password"
-                placeholder="Confirm Password"
+                placeholder="gmail"
               />
             )}
-          </Form.Item> */}
+          </Form.Item>
+
+          <Form.Item>
+            {getFieldDecorator('gender', {
+              rules: [{ required: true, message: 'Please input your gender!' }]
+            })(
+              <Select
+                placeholder="Select a gender"
+                prefix={
+                  <Icon type="man" style={{ color: 'rgba(0,0,0,.25)' }} />
+                }
+              >
+                <Option value="male">male</Option>
+                <Option value="female">female</Option>
+              </Select>
+            )}
+          </Form.Item>
+
+          <Form.Item>
+            {getFieldDecorator('avatar', {
+              rules: [
+                { required: true, message: 'Please input link your avatar!' }
+              ]
+            })(
+              <Input
+                prefix={
+                  <Icon
+                    type="file-image"
+                    style={{ color: 'rgba(0,0,0,.25)' }}
+                  />
+                }
+                placeholder="link avatar"
+              />
+            )}
+          </Form.Item>
+
           <Form.Item>
             <Button
               type="primary"

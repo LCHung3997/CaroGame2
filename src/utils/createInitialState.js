@@ -15,7 +15,8 @@ const createInitialState = () => ({
     moves: [],
     isIncrease: true,
     isDecrease: false,
-    currentUser: {}
+    currentUser: {},
+    error:{},
 
 })
 

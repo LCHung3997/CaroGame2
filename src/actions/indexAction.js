@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-
 import {
   TICK_SQUARE,
   CHECK_WIN,
@@ -12,9 +11,10 @@ import {
   DECREASE,
   LOGIN_ACOUNT,
   LOGOUT_ACOUNT,
-  CONFIRM_REGISTER
+  CONFIRM_REGISTER,
+  REGISTER_ERR,
+  LOGIN_FACEBOOK
 } from '../constants/actions';
-
 
 export const tickSquare = (index, newSquaresArr, history, xIsNext) => ({
   type: TICK_SQUARE,
@@ -37,6 +37,11 @@ export const goToMove = (step, arrWinTemp) => ({
   type: GOTO_MOVE,
   step,
   arrWinTemp
+});
+
+export const loginByFacebook = (facebook) => ({
+  type: LOGIN_FACEBOOK,
+  payload: facebook
 });
 
 export const goToMoveWin = step => ({
@@ -65,33 +70,39 @@ export const confirmRegister = () => ({
   type: CONFIRM_REGISTER
 });
 
-
 export const logAccount = currentUser => ({
   type: LOGIN_ACOUNT,
   payload: currentUser
 });
+export const registerErr = error => ({
+  type: REGISTER_ERR,
+  payload: error
+});
 
-export const fecthAccount = (Username, Password) => {
-  return dispatch => {    
-  return axios
-    .post('https://lchung-passport-jwt.herokuapp.com/user/register', {
-      Username,
-      Password
-    })
-    .then(response => 
-      response.data
-    ).then(data => dispatch)
-    .catch(function(error) {
-      console.log(error);
-    });
-  }
+export const fecthAccount = (Username, Password, gmail, gender, avatar) => {
+  return dispatch => {
+    return axios
+      .post('https://lchung-passport-jwt.herokuapp.com/user/register', {
+        Username,
+        Password,
+        gmail,
+        gender,
+        avatar
+      })
+      .then(response => response.data)
+      .then(data =>
+        dispatch(registerErr(data)))
+      .catch(function(error) {
+        console.log(error);
+      });
+  };
 };
 
-export const loginAccount = (Username, Password) => {
-  return  dispatch => {
-    return  axios
+export const loginAccount = (gmail, Password) => {
+  return dispatch => {
+    return axios
       .post('https://lchung-passport-jwt.herokuapp.com/user/login', {
-        Username,
+        gmail,
         Password
       })
       .then(response => response.data)
@@ -101,11 +112,11 @@ export const loginAccount = (Username, Password) => {
         } else {
           localStorage.setItem('token', data.token);
           dispatch(logAccount(data.user));
-          
         }
-      }).catch(err =>{
+      })
+      .catch(err => {
         console.log(err);
-        dispatch(errLogin())
+        dispatch(errLogin());
       });
   };
 };

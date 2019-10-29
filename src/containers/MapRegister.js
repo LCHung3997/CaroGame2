@@ -1,9 +1,15 @@
 import { connect } from 'react-redux'
 import Register from '../register/home'
- import {fecthAccount} from '../actions/indexAction'
+ import {fecthAccount,restartGame} from '../actions/indexAction'
 
-const mapDispatchToProps = dispatch => ({
-    registerAcc: (Username,Password) => dispatch(fecthAccount(Username,Password)),
+ const mapStateToProps = state => ({
+    state: state.tickSquare
 })
 
-export default connect( null , mapDispatchToProps)(Register)
+const mapDispatchToProps = dispatch => ({
+    registerAcc: (Username,Password,gmail,gender,avatar) => dispatch(fecthAccount(Username,Password,gmail,gender,avatar)),
+    restartGame: () => dispatch(restartGame()),
+   
+})
+
+export default connect( mapStateToProps, mapDispatchToProps)(Register)

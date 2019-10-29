@@ -35,7 +35,7 @@ const tickSquare = (state = createInitialState(), action) => {
         check: false,
         isIncrease: true,
         isDecrease: false,
-        currentUser: {}
+        error: {},
       };
     case 'GOTO_MOVE':
       return {
@@ -81,6 +81,16 @@ const tickSquare = (state = createInitialState(), action) => {
       return {
         ...state,
         currentUser: action.payload
+      };
+    case 'LOGIN_FACEBOOK':
+      return {
+        ...state,
+        currentUser: action.payload
+      };
+    case 'REGISTER_ERR':
+      return {
+        ...state,
+        error: action.payload
       };
     case 'CONFIRM_REGISTER':
       return {

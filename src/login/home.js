@@ -4,9 +4,11 @@ import { withRouter } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import 'antd/dist/antd.css';
 import '../css/login.css';
+ import Facebook from "../component/Facebook";
+
 
 class Login extends React.Component {
-  handleSubmit = async e => {
+  handleSubmit = e => {
     e.preventDefault();
     const { form, history } = this.props;
     form.validateFields((err, values) => {
@@ -44,14 +46,14 @@ class Login extends React.Component {
           <Form.Item>
             {getFieldDecorator('Username', {
               rules: [
-                { required: true, message: 'Please input your username!' }
+                { required: true, message: 'Please input your email!' }
               ]
             })(
-              <Input
+              <Input type="email"
                 prefix={
-                  <Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />
+                  <Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />
                 }
-                placeholder="Username"
+                placeholder="Email"
               />
             )}
           </Form.Item>
@@ -85,7 +87,13 @@ class Login extends React.Component {
             </Button>
           </Form.Item>
         </Form>
+        <div className="App">
+        <Facebook />
+        <br />
+        <br />
       </div>
+      </div>
+      
     );
   }
 }

@@ -6,7 +6,7 @@ import {
   Link,
   Redirect
 } from 'react-router-dom';
-import { Icon,Button } from 'antd';
+import { Icon } from 'antd';
 import { connect } from 'react-redux';
 import MapApp from './containers/MapApp';
 import MapRegister from './containers/MapRegister';
@@ -21,31 +21,28 @@ class Game extends React.PureComponent {
   };
 
   handleClick = () => {
-    const {logoutAccount} = this.props
-    logoutAccount();    
+    const { logoutAccount } = this.props;
+    logoutAccount();
     localStorage.clear();
-    
-
-  }
+  };
 
   render() {
-    // localStorage.clear();
     const tokenn = localStorage.token;
     const { state } = this.props;
     const { currentUser } = state;
-    if (tokenn != null) {
-      // const deToken = jwt.decode(tokens);
+    if (tokenn != null || currentUser.Username != null) {
+      // console.log('----------------an', currentUser)
+      // const deToken = jwt.decode(tokenn);
       // const { currentUser } = state;
       return (
         <Router>
           <div className="sidenav">
             <ul>
               {currentUser.Username ? (
-                <li className='user'>
+                <li className="user">
                   <Link to>
                     <Icon className="icon" type="user" /> {currentUser.Username}
                   </Link>
-                  
                 </li>
               ) : null}
               <br />
@@ -54,22 +51,14 @@ class Game extends React.PureComponent {
                   <Icon className="icon" type="home" /> Home
                 </Link>
               </li>
-              {/* <br />
-              <li>
-                <Link to="/login">
-                  <Icon className="icon" type="login" /> Login
-                </Link>
-              </li>
               <br />
               <li>
-                <Link to="/register">
-                  <Icon className="icon" type="select" /> Register
-                </Link>
-              </li> */}
-              <br />
-              <li>
-                <Link to="/login">
-                  <Icon className="icon" type="logout" /><Button className="btnn" onClick = {this.handleClick}> <b>Logout</b></Button>
+                <Link  to="/login">
+                  <text className="btnn" onClick={this.handleClick}>
+                  <Icon className="icon" type="logout"/> 
+                  {' '}  
+                    Logout
+                  </text>
                 </Link>
               </li>
             </ul>
@@ -77,25 +66,22 @@ class Game extends React.PureComponent {
 
           <div className="main">
             <div className="div70">
-              {/* 
-        {/* A <Switch> looks through its children <Route>s and
-            renders the first one that matches the current URL. */}
               <Switch>
                 <Route path="/login">
-                  <MapLogin />
+                  <Redirect to="/home" />
                 </Route>
                 <Route path="/register">
-                  <MapRegister />
-                </Route>                
+                  <Redirect to="/home" />
+                </Route>
                 {tokenn ? (
                   <Route path="/home">
                     <MapApp />
                   </Route>
                 ) : (
-                  <Redirect to="/login"/>
+                  <Redirect to="/login" />
                 )}
                 <Route path="/">
-                <Redirect to="/home" />
+                  <Redirect to="/home" />
                 </Route>
               </Switch>
             </div>
@@ -107,9 +93,9 @@ class Game extends React.PureComponent {
       <Router>
         <div className="sidenav">
           <ul>
-      <li>
-                <h3 className='title'>CARO VN</h3>
-              </li>
+            <li>
+              <h3 className="title">CARO VN</h3>
+            </li>
             <li>
               <Link to="/login">
                 <Icon className="icon" type="login" /> Login
@@ -137,9 +123,9 @@ class Game extends React.PureComponent {
               <Route path="/register">
                 <MapRegister />
               </Route>
-      <Route path="/">
-                  <Redirect to="/login" />
-                </Route>
+              <Route path="/">
+                <Redirect to="/login" />
+              </Route>
             </Switch>
           </div>
         </div>
@@ -154,8 +140,7 @@ const mapRouterStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetchs: () => dispatch(getProfileFetch()),
-  logoutAccount: () => dispatch(restartGame()),
-
+  logoutAccount: () => dispatch(restartGame())
 });
 
 export default connect(
