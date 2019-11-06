@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import App from '../component/App'
 import { checkWin, tickSquare, restartGame, goToMove, goToMoveWin, sortList,
-        setIncrease, setDecrease } from '../actions/indexAction'
+        setIncrease, setDecrease, setAuto, setFalseIsAuto, pushMessage } from '../actions/indexAction'
 
 // import {tickSquare} from '../actions/indexAction'
 
@@ -18,6 +18,9 @@ const mapDispatchToProps = dispatch => ({
     sortList: (newList) => dispatch(sortList(newList)),
     setIncrease: () => dispatch(setIncrease()),
     setDecrease: () => dispatch(setDecrease()),
+    setAuto: (x)=> dispatch(setAuto(x)),
+    setfIsAuto:() => dispatch(setFalseIsAuto()),
+    pushMessage: (messagesList) => dispatch(pushMessage(messagesList))
 
 })
 

@@ -1,18 +1,100 @@
 import React from 'react';
 import Swal from 'sweetalert2';
+import { Button, Form, InputGroup, FormControl } from 'react-bootstrap';
+import SocketIO from 'socket.io-client';
 import '../css/App.css';
 import Board from './Board';
 
+const messagesList = [];
+let youNext = true;
+const io = SocketIO.connect('https://restfullapi-1612241.herokuapp.com/');
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    const { state } = this.props;
+    const { currentUser } = state;
+
+    io.on('BroadcastMessage', message => {
+      messagesList.push(
+        <div
+          style={
+            currentUser.Username === message.user.Username
+              ? { textAlign: '-webkit-right', marginBottom: '10px' }
+              : { textAlign: '-webkit-left', marginBottom: '10px' }
+          }
+        >
+          <div className="message-time">{message.user.Username}</div>
+          <div className="message-text" style={{ background: '#A0DE96' }}>
+            {message.value}
+          </div>
+        </div>
+      );
+
+      const { pushMessage } = this.props;
+      pushMessage(messagesList);
+    });
+
+    io.on('NewStep', message => {
+      if (message.user.Username !== currentUser.Username) {
+        youNext = true;
+      } else {
+        youNext = false;
+      }
+      this.handleClick(message.index);
+    });
+
+    io.on('broadcastRQUndo', message => {
+      if (message.user.Username !== currentUser.Username) {
+        Swal.fire({
+          type: 'error',
+          title: 'Account or password not found!!!',
+          text: 'Try again!!!'
+        });
+      }
+    });
+  }
+
+  
+  componentDidUpdate = () => {
+    const { state } = this.props;
+    const { isAuto, check, withPerson } = state;
+    if (withPerson) {
+      return null;
+    }
+    if (check) {
+      return null;
+    }
+    if (isAuto === true) {
+        this.handleClick(Math.floor(Math.random() * 399));
+
+    }
+    return null;
+  };  
+
+  addStep = i => {
+    const { state } = this.props;
+    const { withPerson } = state;
+    if (withPerson) {
+      if (youNext) {
+        const { currentUser } = state;
+        io.emit('AddStep', { index: i, user: currentUser });
+        this.handleClick(i);
+      }
+    } 
+    else {
+      this.handleClick(i);
+    }
+  };
+
   handleClick = i => {
     const { state } = this.props;
-    let { history } = state;
+    const { isAuto } = state;
+    const { history } = state;
     const { stepNumber, check, xIsNext } = state;
     const { tickSquares, checkWin } = this.props;
-    history = history.slice(0, stepNumber + 1);
-    const current = history[history.length - 1];
+    const history1 = history.slice(0, stepNumber + 1);
+    const current = history1[history1.length - 1];
     const newSquaresArr = current.squares.slice();
-
     if (check) {
       Swal.fire({
         imageUrl:
@@ -24,10 +106,11 @@ class App extends React.Component {
     }
 
     if (newSquaresArr[i] === null) {
+      const { setAuto } = this.props;
+      setAuto(isAuto);
       const length = 20;
       const arrTem = [];
       newSquaresArr[i] = xIsNext ? 'X' : 'O';
-      // dispatch action
       tickSquares(i, newSquaresArr, history, xIsNext);
 
       switch (newSquaresArr[i]) {
@@ -296,66 +379,92 @@ class App extends React.Component {
 
   handleClickReset = () => {
     const { restartGame } = this.props;
+    youNext = true;
     restartGame();
   };
 
+  sendMessage = e => {
+    const { state } = this.props;
+    const { currentUser } = state;
+    e.preventDefault();
+    io.emit('AddMessage', {
+      value: e.target.messageText.value,
+      user: currentUser,
+      index: state.index
+    });
+    e.target.messageText.value = '';
+  };
+
+  requireJumto = i => {
+    const { state } = this.props;
+    const { currentUser } = state;
+
+    io.emit('rqUndo', {
+      index: i,
+      user: currentUser
+    });
+  };
+
   jumpTo = step => {
-    const { state, goToMove, goToMoveWin } = this.props;
+    const { state, goToMove, goToMoveWin, setfIsAuto } = this.props;
     const { history, checkWin, arrWinTemp } = state;
     const length = history.length - 1;
     if (checkWin === true && step === length) {
       goToMove(step, arrWinTemp);
     } else {
       goToMoveWin(step);
-    }
-  };
-
-  sort = list => {
-    const newList = [];
-    const { sortList } = this.props;
-    let size = list.length;
-    for (let i = 0; i < list.length; i += 1) {
-      newList.push(list[size - 1]);
-      size -= 1;
-    }
-    sortList(newList);
-    
-  };
-
-  fIncrease = list => {
-    const { state, setIncrease } = this.props;
-    const { isDecrease} = state;
-    if (isDecrease) {
-      this.sort(list);
-      setIncrease();
-      return list;
+      if (step % 2 !== 0) {
+        setfIsAuto();
+      }
     }
     return null;
   };
 
-  fDecrease = list => {
-    const { state, setDecrease } = this.props;
-    const { isIncrease } = state;
-    
-    if (isIncrease) {
-      this.sort(list);
-      setDecrease();
-      return list;
-    }
+  // sort = list => {
+  //   const newList = [];
+  //   const { sortList } = this.props;
+  //   let size = list.length;
+  //   for (let i = 0; i < list.length; i += 1) {
+  //     newList.push(list[size - 1]);
+  //     size -= 1;
+  //   }
+  //   sortList(newList);
+  // };
 
-    return null;
-  };
+  // fIncrease = list => {
+  //   const { state, setIncrease } = this.props;
+  //   const { isDecrease } = state;
+  //   if (isDecrease) {
+  //     this.sort(list);
+  //     setIncrease();
+  //     return list;
+  //   }
+  //   return null;
+  // };
 
-  sortHistory = list => {
-    // console.log('sortHistory', this);
-    const newList = [];
-    let size = list.length;
-    for (let i = 0; i < list.length; i += 1) {
-      newList.push(list[size - 1]);
-      size -= 1;
-    }
-    return newList;
-  };
+  // fDecrease = list => {
+  //   const { state, setDecrease } = this.props;
+  //   const { isIncrease } = state;
+
+  //   if (isIncrease) {
+  //     this.sort(list);
+  //     setDecrease();
+  //     return list;
+  //   }
+
+  //   return null;
+  // };
+
+  // sortHistory = list => {
+  //   // console.log('sortHistory', this);
+  //   const newList = [];
+  //   let size = list.length;
+  //   for (let i = 0; i < list.length; i += 1) {
+  //     newList.push(list[size - 1]);
+  //     size -= 1;
+  //   }
+  //   return newList;
+  // };
 
   render() {
     const { state } = this.props;
@@ -363,14 +472,13 @@ class App extends React.Component {
       history,
       stepNumber,
       xIsNext,
-      isDecrease,
-      fIncrease,
-      moves,
-      arrWin
+      arrWin,
+      messages,
+      withPerson
     } = state;
     const current = history[stepNumber];
     const status = `Next player: ${xIsNext ? 'X' : 'O'}`;
-    let movess = history.map((step, move) => {
+    const movess = history.map((step, move) => {
       const desc = move ? `Go to move #${move}` : 'Go to game start';
       const keyIdx = move;
       if (move === stepNumber)
@@ -396,9 +504,9 @@ class App extends React.Component {
         </li>
       );
     });
-    if (isDecrease) {
-      movess = this.sortHistory(movess);
-    }
+    // if (isDecrease) {
+    //   movess = this.sortHistory(movess);
+    // }
 
     // console.log(moves[moves.length].key)
     return (
@@ -419,34 +527,38 @@ class App extends React.Component {
             </button>
             <br />
             <br />
+            {withPerson ? null : (
+              <div className="table-wrapper-scroll-y my-custom-scrollbar">
+                <table className="  table table-bordered table-striped mb-0">
+                  <thead>
+                    <tr>
+                      <th className="App" scope="col">
+                        MoveList
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">{movess}</th>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
             <br />
-            <div className="table-wrapper-scroll-y my-custom-scrollbar">
-              <table className="  table table-bordered table-striped mb-0">
-                <thead>
-                  <tr>
-                    <th className="App" scope="col">
-                      MoveList
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">{fIncrease ? moves : movess}</th>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <br />
-            <br />
+            {withPerson ? (
+              <div>
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={() => this.requireJumto(history.length - 1)}
+                >
+                  Undo
+                </button>
+              </div>
+            ) : null}
 
-            <div>
-              <button
-                type="button"
-                className="btn btn-success"
-                onClick={() => this.fIncrease(moves)}
-              >
-                Increase
-              </button>
+            {/* 
               &emsp;
               <button
                 type="button"
@@ -455,15 +567,44 @@ class App extends React.Component {
               >
                 Decrease
               </button>
-            </div>
+            </div> */}
           </div>
           <Board
             arrWins={arrWin}
             squares={current.squares}
-            onClick={index => this.handleClick(index)}
+            onClick={index => this.addStep(index)}
             color={xIsNext}
           />
         </div>
+        {withPerson ? (
+          <div className="messenger" style={{ color: 'black' }}>
+            <div className="message-header">CHAT BOX</div>
+            <hr style={{ marginTop: '30px' }} />
+
+            <div className="message-body" id="message-body">
+              {messages}
+            </div>
+
+            <Form onSubmit={this.sendMessage} autoComplete="off">
+              <InputGroup
+                className="mb-3 message-input"
+                style={{ padding: '0px', margin: '0px' }}
+              >
+                <FormControl
+                  style={{ padding: '0px' }}
+                  aria-label="Recipient's username"
+                  aria-describedby="basic-addon2"
+                  name="messageText"
+                />
+                <InputGroup.Append>
+                  <Button variant="success" type="submit">
+                    Send
+                  </Button>
+                </InputGroup.Append>
+              </InputGroup>
+            </Form>
+          </div>
+        ) : null}
       </div>
     );
   }

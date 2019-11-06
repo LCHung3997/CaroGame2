@@ -17,6 +17,11 @@ const createInitialState = () => ({
     isDecrease: false,
     currentUser: {},
     error:{},
+    pending: false,
+    isAuto: false,
+    messages: [],
+    index: -1,
+    withPerson: false,
 
 })
 

@@ -9,17 +9,31 @@
 .login-form-button {
   width: 100%;
 }
+.option{
+  display: grid;
+  text-align: center;
+  width: 60%;
+  height: 300px;
+  margin: auto;
+}
 .Container {
   width: 65%;
-  height: 350px;
+  height: 550px;
+  margin: inherit;
 }
 .h3{
-    margin-left: 200px;
+  text-align: center;
     padding-bottom: 10px;
 }
 .register{
+  margin: inherit;
     width: 65%;
-  height: 500px;
+  height: 580px;
+}
+.changpass{
+  width: 65%;
+  height: 400px;
+  margin: inherit;
 }
 
 button {

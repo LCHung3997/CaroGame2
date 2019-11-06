@@ -4,8 +4,8 @@ import { withRouter } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import 'antd/dist/antd.css';
 import '../css/login.css';
- import Facebook from "../component/Facebook";
-
+import Facebook from '../component/Facebook';
+import Google from '../component/Google';
 
 class Login extends React.Component {
   handleSubmit = e => {
@@ -20,36 +20,39 @@ class Login extends React.Component {
             const tokens = localStorage.token;
             if (tokens === undefined) {
               Swal.fire({
-                type : 'error',
-                title: 'Account or password not found!!!',
-                text: 'Try again!!!'
+                type: 'success',
+                title: 'Register succeed',
+                confirmButtonText: 'LOGIN'
+              }).then(result => {
+                if (result.value) {
+                  history.push('/login');
+                }
               });
-            
             } else {
               history.push('/home');
-            
             }
           }
         );
       }
     });
-   
   };
 
   render() {
-    const { form } = this.props;    
+    const { form, state } = this.props;
     const { getFieldDecorator } = form;
+
+    const { pending } = state;
+
     return (
-      <div className="shadow-lg m-5 p-5 Container">
+      <div className="shadow-lg mt-5 p-5 Container">
         <h3 className="h3">LOGIN</h3>
         <Form onSubmit={this.handleSubmit} className="login-form">
           <Form.Item>
             {getFieldDecorator('Username', {
-              rules: [
-                { required: true, message: 'Please input your email!' }
-              ]
+              rules: [{ required: true, message: 'Please input your email!' }]
             })(
-              <Input type="email"
+              <Input
+                type="email"
                 prefix={
                   <Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />
                 }
@@ -72,6 +75,21 @@ class Login extends React.Component {
               />
             )}
           </Form.Item>
+          {pending ? (
+            <div
+              style={{
+                background: 'white',
+                width: '100%',
+                height: '100%',
+                opacity: '60%',
+                zIndex: 1
+              }}
+            >
+              <Icon type="loading" style={{ fontSize: 24 }} />
+            </div>
+          ) : (
+            ''
+          )}
           <Form.Item>
             {getFieldDecorator('remember', {
               valuePropName: 'checked',
@@ -88,12 +106,13 @@ class Login extends React.Component {
           </Form.Item>
         </Form>
         <div className="App">
-        <Facebook />
-        <br />
-        <br />
+          <Facebook />
+          or
+          <Google />
+          
+        </div>
+        
       </div>
-      </div>
-      
     );
   }
 }
